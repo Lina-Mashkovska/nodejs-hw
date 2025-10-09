@@ -1,0 +1,28 @@
+{
+  "name": "nodejs-hw",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "HW 01 Express notes API",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  },
+  "keywords": [],
+  "author": "Alina Maskovska <linamark0001@gmail.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^9.37.0",
+    "nodemon": "^3.1.10",
+    "prettier": "^3.6.2"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "pino-http": "^11.0.0"
+  }
+}
+
