@@ -10,11 +10,21 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-
 app.use(
   pinoHttp({
-
-    genReqId: (req) => req.id || `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`
+    genReqId: (req) =>
+      req.id || `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
+  
+    transport:
+      process.env.NODE_ENV !== "production"
+        ? {
+            target: "pino-pretty",
+            options: {
+              singleLine: true,
+              translateTime: "SYS:standard",
+            },
+          }
+        : undefined,
   })
 );
 
@@ -27,7 +37,6 @@ app.get("/notes/:noteId", (req, res) => {
   res.status(200).json({ message: `Retrieved note with ID: ${noteId}` });
 });
 
-
 app.get("/test-error", () => {
   throw new Error("Simulated server error");
 });
@@ -36,22 +45,17 @@ app.use((req, res) => {
   res.status(404).json({ message: "Route not found" });
 });
 
-
 app.use((err, req, res, _next) => {
-
   if (req.log && typeof req.log.error === "function") {
     req.log.error({ err }, "Unhandled error");
   } else {
-
     console.error(err);
   }
   res.status(500).json({ message: err.message || "Internal Server Error" });
 });
 
-
-
 const PORT = Number(process.env.PORT) || 3000;
 app.listen(PORT, () => {
-
   console.log(`Server running on port ${PORT}`);
 });
+
