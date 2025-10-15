@@ -16,21 +16,20 @@ app.use(cors());
 app.use(express.json());
 app.use(logger);
 
-
 app.use(notesRoutes);
-
 
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-const PORT = Number(process.env.PORT) || 3000;
 
+const PORT = Number(process.env.PORT) || 3030;
 
 (async function bootstrap() {
-  await connectMongoDB(); 
+  await connectMongoDB();
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
 })();
+
 
 
