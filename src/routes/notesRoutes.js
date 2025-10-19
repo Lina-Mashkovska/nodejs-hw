@@ -1,4 +1,11 @@
 import { Router } from "express";
+import { celebrate, Segments } from "celebrate";
+import {
+  getAllNotesSchema,
+  noteIdSchema,
+  createNoteSchema,
+  updateNoteSchema,
+} from "../validations/notesValidation.js";
 import {
   getAllNotes,
   getNoteById,
@@ -6,20 +13,42 @@ import {
   updateNote,
   deleteNote,
 } from "../controllers/notesController.js";
-import {
-  getAllNotesSchema,
-  noteIdSchema,
-  createNoteSchema,
-  updateNoteSchema,
-} from "../validations/notesValidation.js";
 
 const router = Router();
 
-router.get("/notes", getAllNotesSchema, getAllNotes);
-router.get("/notes/:noteId", noteIdSchema, getNoteById);
-router.post("/notes", createNoteSchema, createNote);
-router.patch("/notes/:noteId", noteIdSchema, updateNoteSchema, updateNote);
-router.delete("/notes/:noteId", noteIdSchema, deleteNote);
+router.get(
+  "/notes",
+  celebrate({ [Segments.QUERY]: getAllNotesSchema }),
+  getAllNotes
+);
+
+router.get(
+  "/notes/:noteId",
+  celebrate({ [Segments.PARAMS]: noteIdSchema }),
+  getNoteById
+);
+
+router.post(
+  "/notes",
+  celebrate({ [Segments.BODY]: createNoteSchema }),
+  createNote
+);
+
+router.patch(
+  "/notes/:noteId",
+  celebrate({
+    [Segments.PARAMS]: noteIdSchema,
+    [Segments.BODY]: updateNoteSchema,
+  }),
+  updateNote
+);
+
+router.delete(
+  "/notes/:noteId",
+  celebrate({ [Segments.PARAMS]: noteIdSchema }),
+  deleteNote
+);
 
 export default router;
+
 

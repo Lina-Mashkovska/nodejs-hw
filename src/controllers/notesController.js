@@ -1,61 +1,61 @@
 import createHttpError from "http-errors";
 import { Note } from "../models/note.js";
 
-
-export async function getAllNotes(req, res, next) {
+export const getAllNotes = async (req, res, next) => {
   try {
-    const { page = 1, perPage = 10, tag, search = "" } = req.query;
+    const { page = 1, perPage = 10, tag, search } = req.query;
 
     const filter = {};
     if (tag) filter.tag = tag;
-    if (search && search.trim() !== "") {
+
+    if (typeof search === "string" && search.trim() !== "") {
       filter.$text = { $search: search.trim() };
     }
 
-    const pageNum = Number(page);
-    const limit = Number(perPage);
-    const skip = (pageNum - 1) * limit;
+    const skip = (page - 1) * perPage;
 
-    const [totalNotes, notes] = await Promise.all([
+    const [notes, totalNotes] = await Promise.all([
+      Note.find(filter).sort({ createdAt: -1 }).skip(skip).limit(perPage),
       Note.countDocuments(filter),
-      Note.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit),
     ]);
 
+    const totalPages = Math.max(1, Math.ceil(totalNotes / perPage));
+
     res.status(200).json({
-      page: pageNum,
-      perPage: limit,
+      page,
+      perPage,
       totalNotes,
-      totalPages: Math.ceil(totalNotes / limit) || 1,
+      totalPages,
       notes,
     });
-  } catch (e) {
-    next(e);
+  } catch (err) {
+    next(err);
   }
-}
+};
 
-export async function getNoteById(req, res, next) {
+
+export const getNoteById = async (req, res, next) => {
   try {
     const { noteId } = req.params;
     const note = await Note.findById(noteId);
     if (!note) throw createHttpError(404, "Note not found");
-    res.status(200).json(note);
-  } catch (e) {
-    next(e);
+    res.status(200).json({ note });
+  } catch (err) {
+    next(err);
   }
-}
+};
 
-
-export async function createNote(req, res, next) {
+export const createNote = async (req, res, next) => {
   try {
-    const { title, content, tag } = req.body;
-    const note = await Note.create({ title, content, tag });
-    res.status(201).json(note);
-  } catch (e) {
-    next(e);
+    const note = await Note.create(req.body);
+    res.status(201).json({ note });
+  } catch (err) {
+    next(err);
   }
-}
+};
 
-export async function updateNote(req, res, next) {
+
+export const updateNote = async (req, res, next) => {
   try {
     const { noteId } = req.params;
     const note = await Note.findByIdAndUpdate(noteId, req.body, {
@@ -63,21 +63,21 @@ export async function updateNote(req, res, next) {
       runValidators: true,
     });
     if (!note) throw createHttpError(404, "Note not found");
-    res.status(200).json(note);
-  } catch (e) {
-    next(e);
+    res.status(200).json({ note });
+  } catch (err) {
+    next(err);
   }
-}
+};
 
-
-export async function deleteNote(req, res, next) {
+export const deleteNote = async (req, res, next) => {
   try {
     const { noteId } = req.params;
     const note = await Note.findByIdAndDelete(noteId);
     if (!note) throw createHttpError(404, "Note not found");
-    res.status(200).json(note);
-  } catch (e) {
-    next(e);
+    res.status(204).send(); // без тіла
+  } catch (err) {
+    next(err);
   }
-}
+};
+
 

@@ -23,20 +23,15 @@ app.use(notFoundHandler);
 app.use(celebrateErrors());
 app.use(errorHandler);
 
-
 const PORT = Number(process.env.PORT) || 3030;
 
 (async function bootstrap() {
-  try {
-    await connectMongoDB();
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
-  } catch (err) {
-    console.error("❌ Failed to start server:", err);
-    process.exit(1);
-  }
+  await connectMongoDB();
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
 })();
+
 
 
 
