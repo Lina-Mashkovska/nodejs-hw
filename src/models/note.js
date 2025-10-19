@@ -1,25 +1,18 @@
 import mongoose from "mongoose";
+import { Note } from "../models/note.js"; 
 
-export const TAGS = [
-  "Work",
-  "Personal",
-  "Meeting",
-  "Shopping",
-  "Ideas",
-  "Travel",
-  "Finance",
-  "Health",
-  "Important",
-  "Todo",
-];
+export async function connectMongoDB() {
+  const { MONGO_URL } = process.env;
+  if (!MONGO_URL) throw new Error("MONGO_URL is not set");
 
-const noteSchema = new mongoose.Schema(
-  {
-    title: { type: String, required: true, trim: true },
-    content: { type: String, default: "", trim: true },
-    tag: { type: String, enum: TAGS, default: "Todo", trim: true },
-  },
-  { timestamps: true }
-);
+  mongoose.set("strictQuery", true);
+  mongoose.set("autoIndex", true); 
 
-export const Note = mongoose.model("Note", noteSchema); 
+  await mongoose.connect(MONGO_URL);
+
+
+  await Note.syncIndexes();
+
+  console.log("✅ MongoDB connection established successfully");
+}
+
