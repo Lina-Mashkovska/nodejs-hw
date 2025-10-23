@@ -1,11 +1,15 @@
+// src/routes/notesRoutes.js
 import { Router } from "express";
 import { celebrate, Segments } from "celebrate";
+import { authenticate } from "../middleware/authenticate.js";
+
 import {
   getAllNotesSchema,
   noteIdSchema,
   createNoteSchema,
   updateNoteSchema,
 } from "../validations/notesValidation.js";
+
 import {
   getAllNotes,
   getNoteById,
@@ -15,6 +19,9 @@ import {
 } from "../controllers/notesController.js";
 
 const router = Router();
+
+
+router.use("/notes", authenticate);
 
 router.get(
   "/notes",
@@ -50,5 +57,3 @@ router.delete(
 );
 
 export default router;
-
-
