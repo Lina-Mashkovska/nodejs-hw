@@ -13,9 +13,9 @@ import {
 
 const router = Router();
 
-router.post("/register", celebrate({ body: registerUserSchema }), registerUser);
-router.post("/login", celebrate({ body: loginUserSchema }), loginUser);
-router.post("/refresh", refreshUserSession);
-router.post("/logout", logoutUser);
+router.post("/auth/register", celebrate({ body: registerUserSchema }), registerUser);
+router.post("/auth/login", celebrate({ body: loginUserSchema }), loginUser);
+router.post("/auth/refresh", refreshUserSession);
+router.post("/auth/logout", logoutUser);
 
 export default router;
