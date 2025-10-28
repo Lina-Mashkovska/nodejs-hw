@@ -116,6 +116,11 @@ export const requestResetEmail = async (req, res, next) => {
     await sendEmail({
       to: user.email,
       subject: "Password Reset Request",
+      templatePath: "src/templates/reset-password-email.html",
+      variables: {
+        username: user.username,
+        resetLink: `${process.env.FRONTEND_DOMAIN}/reset-password?token=${token}`,
+      },
       html,
     });
 
@@ -148,5 +153,6 @@ export const resetPassword = async (req, res, next) => {
     next(err);
   }
 };
+
 
 

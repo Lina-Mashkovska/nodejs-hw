@@ -15,21 +15,22 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export const sendEmail = async (to, subject, templatePath, variables) => {
-  const source = await fs.readFile(templatePath, "utf8");
-  const compiledTemplate = handlebars.compile(source);
-  const html = compiledTemplate(variables);
-
+export const sendEmail = async (options) => {
   try {
-    await transporter.sendMail({
+    const source = await fs.readFile(options.templatePath, "utf8");
+    const compiledTemplate = handlebars.compile(source);
+    const html = compiledTemplate(options.variables);
+
+    return await transporter.sendMail({
       from: SMTP_FROM,
-      to,
-      subject,
+      to: options.to,
+      subject: options.subject,
       html,
     });
   } catch {
     throw createHttpError(500, "Failed to send the email, please try again later.");
   }
 };
+
 
 

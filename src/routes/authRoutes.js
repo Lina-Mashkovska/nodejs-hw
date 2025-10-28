@@ -1,21 +1,27 @@
-import { Router } from "express";
-import { celebrate } from "celebrate"; 
+import express from "express";
 import {
   registerUser,
   loginUser,
-  refreshUserSession,
   logoutUser,
+  refreshUserSession,
+  requestResetEmail,
+  resetPassword,
 } from "../controllers/authController.js";
 import {
   registerUserSchema,
   loginUserSchema,
+  requestResetEmailSchema,
+  resetPasswordSchema,
 } from "../validations/authValidation.js";
 
-const router = Router();
+const router = express.Router();
 
-router.post("/auth/register", celebrate({ body: registerUserSchema }), registerUser);
-router.post("/auth/login", celebrate({ body: loginUserSchema }), loginUser);
-router.post("/auth/refresh", refreshUserSession);
+router.post("/auth/register", registerUserSchema, registerUser);
+router.post("/auth/login", loginUserSchema, loginUser);
 router.post("/auth/logout", logoutUser);
+router.post("/auth/refresh", refreshUserSession);
+router.post("/auth/request-reset-email", requestResetEmailSchema, requestResetEmail);
+router.post("/auth/reset-password", resetPasswordSchema, resetPassword);
 
 export default router;
+
