@@ -31,10 +31,6 @@ app.use(authRoutes);
 app.use(notesRoutes);
 app.use(userRoutes);
 
-app.get("/", (req, res) => {
-  res.status(200).json({ message: "Server is alive ✅" });
-});
-
 app.use(notFoundHandler);
 app.use(celebrateErrors());
 app.use(errorHandler);
@@ -52,6 +48,7 @@ const PORT = Number(process.env.PORT) || 3030;
     process.exit(1);
   }
 })();
+
 
 
 
